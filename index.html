@@ -1,0 +1,492 @@
+prueba
+linea2<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e6e6a">
+<title>Registro de Dolor Lumbar</title>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una columna estrecha tipo ficha clínica; las 7 preguntas en orden y el envío al final */
+:root{
+  --bg:#eef2f4; --surface:#ffffff; --surface-2:#f5f8f9; --ink:#14252b; --muted:#5b6d73; --line:#d7e0e3;
+  --accent:#0e6e6a; --accent-ink:#ffffff; --accent-soft:#dcefed;
+  --ok:#2f9e5b; --warn:#e0a21c; --bad:#d6453d; --ok-soft:#e1f3e8; --warn-soft:#fbf0d6; --bad-soft:#fbe3e1;
+  --wa:#1f9e55;
+  --f-display:"Sora", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1719; --surface:#172225; --surface-2:#1d2a2e; --ink:#e6eef0; --muted:#97a9ae; --line:#2b3b40;
+  --accent:#3fb8b0; --accent-ink:#06201f; --accent-soft:#163a39;
+  --ok:#4cc27c; --warn:#f0b93d; --bad:#f06a61; --ok-soft:#173326; --warn-soft:#3a2f12; --bad-soft:#3d1c1a;
+  --wa:#35c06f; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f1719; --surface:#172225; --surface-2:#1d2a2e; --ink:#e6eef0; --muted:#97a9ae; --line:#2b3b40;
+  --accent:#3fb8b0; --accent-ink:#06201f; --accent-soft:#163a39;
+  --ok:#4cc27c; --warn:#f0b93d; --bad:#f06a61; --ok-soft:#173326; --warn-soft:#3a2f12; --bad-soft:#3d1c1a;
+  --wa:#35c06f; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:1.55rem;line-height:1.15}
+h2{font-size:1.12rem}
+p{margin:0}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+
+header.top{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:var(--r);background:var(--accent);color:var(--accent-ink)}
+header.top .eyebrow{opacity:.8}
+header.top p.sub{opacity:.92;font-size:.98rem}
+.meta{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:color-mix(in srgb, var(--accent-ink) 16%, transparent);font-size:.88rem;font-weight:600;font-variant-numeric:tabular-nums}
+.chip svg{width:15px;height:15px}
+
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:18px}
+.card-head{display:flex;align-items:center;gap:12px}
+.step{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-family:var(--f-display);font-weight:700}
+.field{display:flex;flex-direction:column;gap:8px}
+.label{font-weight:600;font-size:.98rem}
+.req{color:var(--bad)}
+.hint{color:var(--muted);font-size:.85rem}
+.sub-field{padding-left:12px;border-left:3px solid var(--accent-soft)}
+
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface-2);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px}
+textarea{min-height:84px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid color-mix(in srgb, var(--accent) 55%, transparent);outline-offset:2px}
+.invalid input,.invalid .scale{box-shadow:0 0 0 2px var(--bad);border-radius:10px}
+.err{color:var(--bad);font-size:.85rem;font-weight:600}
+
+/* escala 0–10 */
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.scale button{font:inherit;font-weight:700;font-variant-numeric:tabular-nums;min-height:44px;padding:0;border-radius:8px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer;transition:transform .08s}
+.scale button:active{transform:scale(.94)}
+.scale button[aria-pressed=true]{color:#fff;border-color:transparent}
+.scale button[aria-pressed=true].z-ok{background:var(--ok)}
+.scale button[aria-pressed=true].z-warn{background:var(--warn);color:#2a1d00}
+.scale button[aria-pressed=true].z-bad{background:var(--bad)}
+.scale-ends{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)}
+.readout{font-size:.88rem;font-weight:600;min-height:1.3em}
+.z-ok.readout{color:var(--ok)} .z-warn.readout{color:var(--warn)} .z-bad.readout{color:var(--bad)}
+.diff{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:var(--surface-2);font-weight:600}
+.diff .val{font-family:var(--f-display);font-size:1.2rem;font-variant-numeric:tabular-nums}
+
+/* opciones */
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-size:.92rem;font-weight:600;padding:10px 14px;min-height:44px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface-2);color:var(--ink);cursor:pointer}
+.opt[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* actividades diarias */
+.acts{display:flex;flex-direction:column;gap:10px}
+.act{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.act span{flex:1 1 150px;font-weight:600;font-size:.94rem}
+.seg{flex:1 1 210px;display:grid;grid-template-columns:repeat(3,1fr);border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{font:inherit;font-size:.88rem;font-weight:600;min-height:42px;border:0;background:var(--surface-2);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1.5px solid var(--line)}
+.seg button[aria-pressed=true][data-v="Mejor"]{background:var(--ok);color:#fff}
+.seg button[aria-pressed=true][data-v="Igual"]{background:var(--accent);color:var(--accent-ink)}
+.seg button[aria-pressed=true][data-v="Peor"]{background:var(--bad);color:#fff}
+
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;border:1.5px solid var(--line);cursor:pointer;background:var(--surface-2);font-size:.92rem}
+.check input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--bad);flex:none}
+.check:has(input:checked){border-color:var(--bad);background:var(--bad-soft)}
+.alert{border-radius:12px;padding:14px;background:var(--bad-soft);border:1.5px solid var(--bad);display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+.alert strong{color:var(--bad)}
+.alert.soft{background:var(--warn-soft);border-color:var(--warn)}
+.alert.soft strong{color:var(--ink)}
+
+.send{display:flex;flex-direction:column;gap:12px}
+.btn-send{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:14px;background:var(--wa);color:#fff;font-family:var(--f-display);font-weight:700;font-size:1.05rem;text-decoration:none}
+.btn-send svg,.btn-pdf svg{width:22px;height:22px;flex:none}
+.btn-pdf{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:14px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-display);font-weight:700;font-size:1.02rem;border:0;cursor:pointer;padding:0 16px}
+.btn-pdf.done{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px var(--ok)}
+.btn-pdf[disabled]{opacity:.6;cursor:wait}
+.send-help{font-size:.86rem;color:var(--muted);text-align:center}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-sec{font:inherit;font-weight:600;min-height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.toast{font-size:.88rem;font-weight:600;color:var(--accent);text-align:center;min-height:1.3em}
+details.preview summary{cursor:pointer;color:var(--muted);font-size:.9rem;font-weight:600}
+details.preview pre{white-space:pre-wrap;font-family:var(--f-body);font-size:.85rem;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0 0;user-select:all}
+footer{text-align:center;color:var(--muted);font-size:.8rem}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media (max-width:360px){.scale{gap:3px}.scale button{font-size:.85rem}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Seguimiento 24 h tras la sesión</span>
+    <h1>¿Qué tal te encuentras después de la sesión de ayer?</h1>
+    <div class="meta">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><span id="dateTxt">—</span></span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="timeTxt">—</span></span>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="field" id="f-name">
+      <label class="label" for="name">Tu nombre <span class="req">*</span></label>
+      <input type="text" id="name" autocomplete="name" placeholder="Nombre y apellido">
+      <span class="err" hidden>Escribe tu nombre para que sepa de quién es el registro.</span>
+    </div>
+  </section>
+
+  <!-- 1 -->
+  <section class="card">
+    <div class="card-head"><span class="step">1</span><h2>Dolor lumbar</h2></div>
+    <div class="field" id="f-now">
+      <span class="label">Del 0 al 10, ¿cuánto te duele <u>ahora</u> la zona lumbar? <span class="req">*</span></span>
+      <div class="scale" data-key="now" role="group" aria-label="Dolor ahora, de 0 a 10"></div>
+      <div class="scale-ends"><span>0 · Sin dolor</span><span>10 · Máximo imaginable</span></div>
+      <span class="readout" data-for="now"></span>
+      <span class="err" hidden>Marca un valor de 0 a 10.</span>
+    </div>
+    <div class="field" id="f-before">
+      <span class="label">¿Y cuánto te dolía <u>antes</u> de la sesión? <span class="req">*</span></span>
+      <div class="scale" data-key="before" role="group" aria-label="Dolor antes de la sesión, de 0 a 10"></div>
+      <div class="scale-ends"><span>0 · Sin dolor</span><span>10 · Máximo imaginable</span></div>
+      <span class="readout" data-for="before"></span>
+      <span class="err" hidden>Marca un valor de 0 a 10.</span>
+    </div>
+    <div class="diff"><span>Cambio respecto a antes</span><span class="val" id="diffVal">—</span></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="card">
+    <div class="card-head"><span class="step">2</span><h2>Dolor irradiado</h2></div>
+    <div class="field">
+      <span class="label">El dolor que baja hacia el glúteo o la pierna…</span>
+      <div class="opts" data-key="irr"><button type="button" class="opt">Ha disminuido</button><button type="button" class="opt">Sigue igual</button><button type="button" class="opt">Ha aumentado</button><button type="button" class="opt">No tengo dolor que baje</button></div>
+    </div>
+    <div class="field" data-show="irr" data-not="No tengo dolor que baje">
+      <span class="label">¿Hasta dónde llega ahora?</span>
+      <span class="hint">Marca el punto más bajo al que llega.</span>
+      <div class="opts" data-key="reach"><button type="button" class="opt">Glúteo</button><button type="button" class="opt">Muslo</button><button type="button" class="opt">Pantorrilla</button><button type="button" class="opt">Pie</button></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="card">
+    <div class="card-head"><span class="step">3</span><h2>Hormigueo y sensibilidad</h2></div>
+    <div class="field">
+      <span class="label">Respecto a antes de entrenar, ¿has notado más hormigueo, entumecimiento o pérdida de sensibilidad?</span>
+      <div class="opts" data-key="tingle"><button type="button" class="opt">Sí, más que antes</button><button type="button" class="opt">Igual que antes</button><button type="button" class="opt">Menos que antes</button><button type="button" class="opt">No tengo</button></div>
+    </div>
+    <div class="field sub-field" data-show="tingle" data-is="Sí, más que antes">
+      <span class="label">¿Qué notas?</span>
+      <div class="opts" data-key="tingleType" data-multi><button type="button" class="opt">Hormigueo</button><button type="button" class="opt">Entumecimiento</button><button type="button" class="opt">Pérdida de sensibilidad</button></div>
+    </div>
+    <label class="check"><input type="checkbox" id="saddle"><span>Marca solo si te pasa: adormecimiento en la zona genital o entre los glúteos, o cambios al orinar o en el control intestinal.</span></label>
+  </section>
+
+  <!-- 4 -->
+  <section class="card">
+    <div class="card-head"><span class="step">4</span><h2>Fuerza</h2></div>
+    <div class="field">
+      <span class="label">¿Has notado alguna debilidad nueva en la pierna o el pie, o más dificultad para caminar, subir escaleras o apoyar el pie?</span>
+      <div class="opts" data-key="weak"><button type="button" class="opt">No</button><button type="button" class="opt">Sí</button></div>
+    </div>
+    <div class="field sub-field" data-show="weak" data-is="Sí">
+      <span class="label">¿En qué lo notas?</span>
+      <div class="opts" data-key="weakType" data-multi><button type="button" class="opt">Debilidad en la pierna</button><button type="button" class="opt">Debilidad en el pie</button><button type="button" class="opt">Caminar</button><button type="button" class="opt">Subir escaleras</button><button type="button" class="opt">Apoyar el pie</button></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="card">
+    <div class="card-head"><span class="step">5</span><h2>Actividades diarias</h2></div>
+    <span class="hint" style="margin-top:-8px">Comparado con antes de la sesión, ¿cómo lo haces?</span>
+    <div class="acts" id="acts"></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="card">
+    <div class="card-head"><span class="step">6</span><h2>Evolución en las últimas 24 horas</h2></div>
+    <div class="field">
+      <span class="label">Justo después de entrenar te encontraste…</span>
+      <div class="opts" data-key="evoPost"><button type="button" class="opt">Mejor</button><button type="button" class="opt">Igual</button><button type="button" class="opt">Peor</button></div>
+    </div>
+    <div class="field">
+      <span class="label">Y durante las horas posteriores…</span>
+      <div class="opts" data-key="evoHours"><button type="button" class="opt">Mejor</button><button type="button" class="opt">Igual</button><button type="button" class="opt">Peor</button></div>
+    </div>
+    <div class="field">
+      <span class="label">Ahora mismo, el dolor…</span>
+      <div class="opts" data-key="level"><button type="button" class="opt">Ha vuelto a su nivel habitual</button><button type="button" class="opt">Continúa aumentado</button><button type="button" class="opt">Está por debajo de lo habitual</button></div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="card">
+    <div class="card-head"><span class="step">7</span><h2>Descanso</h2></div>
+    <div class="field">
+      <span class="label">¿Has podido dormir con normalidad?</span>
+      <div class="opts" data-key="sleep"><button type="button" class="opt">Sí</button><button type="button" class="opt">No</button></div>
+    </div>
+    <div class="field">
+      <span class="label">¿El dolor te ha despertado?</span>
+      <div class="opts" data-key="woke"><button type="button" class="opt">No</button><button type="button" class="opt">Sí, una vez</button><button type="button" class="opt">Sí, varias veces</button></div>
+    </div>
+    <div class="field">
+      <span class="label">¿Ha empeorado de forma importante durante la noche?</span>
+      <div class="opts" data-key="night"><button type="button" class="opt">No</button><button type="button" class="opt">Sí</button></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="field">
+      <label class="label" for="notes">¿Algo más que quieras contarme?</label>
+      <textarea id="notes" data-text="notes" placeholder="Opcional"></textarea>
+    </div>
+  </section>
+
+
+  <section class="send">
+    <button type="button" class="btn-pdf" id="saveBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 12v6M9 15l3 3 3-3"/></svg>
+      <span id="saveLbl">Guardar y compartir en PDF</span>
+    </button>
+    <p class="send-help" id="saveHelp" hidden>PDF listo. Si no se ha abierto el menú de compartir, búscalo en tus descargas y envíaselo a tu entrenador por WhatsApp o email.</p>
+    <div class="toast" id="toast" role="status"></div>
+  </section>
+
+  <footer>Tus respuestas se guardan en este móvil durante el día de hoy.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+
+const now = new Date();
+const todayKey = now.toISOString().slice(0,10);
+const dateLong = now.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+const dateShort = now.toLocaleDateString("es-ES",{day:"2-digit",month:"2-digit",year:"numeric"});
+const timeTxt = now.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+document.getElementById("dateTxt").textContent = dateLong.charAt(0).toUpperCase()+dateLong.slice(1);
+document.getElementById("timeTxt").textContent = timeTxt+" h";
+
+const store = {
+  get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+const DRAFT="lumbar24-draft";
+const ACTS=["Caminar","Sentarte","Levantarte de una silla","Actividades habituales"];
+const blank=()=>({date:todayKey,now:null,before:null,irr:null,reach:null,tingle:null,tingleType:[],saddle:false,weak:null,weakType:[],acts:{},evoPost:null,evoHours:null,level:null,sleep:null,woke:null,night:null,notes:""});
+let S=store.get(DRAFT); if(!S||S.date!==todayKey) S=blank();
+
+const zone=v=>v==null?"":v<=2?"z-ok":v<=5?"z-warn":"z-bad";
+const desc=v=>v==null?"":v===0?"Sin dolor":v<=3?"Dolor leve":v<=6?"Dolor moderado":v<=9?"Dolor intenso":"Dolor máximo";
+
+function renderScales(){
+  document.querySelectorAll(".scale[data-key]").forEach(el=>{
+    const k=el.dataset.key; el.innerHTML="";
+    for(let i=0;i<=10;i++){
+      const b=document.createElement("button"); b.type="button"; b.textContent=i; b.className=zone(i);
+      b.setAttribute("aria-label",i+" de 10"); b.setAttribute("aria-pressed",S[k]===i);
+      b.onclick=()=>{S[k]=S[k]===i?null:i; clearErr("f-"+k); renderScales(); update();};
+      el.appendChild(b);
+    }
+    const r=document.querySelector('.readout[data-for="'+k+'"]');
+    r.textContent=S[k]==null?"":S[k]+"/10 · "+desc(S[k]); r.className="readout "+zone(S[k]);
+  });
+}
+function renderOpts(){
+  document.querySelectorAll(".opts[data-key]").forEach(g=>{
+    const k=g.dataset.key, multi=g.hasAttribute("data-multi");
+    g.querySelectorAll(".opt").forEach(b=>{
+      const t=b.textContent;
+      b.setAttribute("aria-pressed", multi?S[k].includes(t):S[k]===t);
+      b.onclick=()=>{
+        if(multi) S[k]=S[k].includes(t)?S[k].filter(x=>x!==t):[...S[k],t];
+        else S[k]=S[k]===t?null:t;
+        renderOpts(); update();
+      };
+    });
+  });
+  document.querySelectorAll("[data-show]").forEach(f=>{
+    const v=S[f.dataset.show];
+    f.hidden = f.dataset.is!=null ? v!==f.dataset.is : (v==null || v===f.dataset.not);
+  });
+}
+function renderActs(){
+  const box=document.getElementById("acts"); box.innerHTML="";
+  ACTS.forEach(a=>{
+    const row=document.createElement("div"); row.className="act";
+    row.innerHTML='<span>'+a+'</span><div class="seg" role="group" aria-label="'+a+'"></div>';
+    ["Mejor","Igual","Peor"].forEach(v=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=v; b.dataset.v=v;
+      b.setAttribute("aria-pressed",S.acts[a]===v);
+      b.onclick=()=>{ S.acts[a]=S.acts[a]===v?null:v; renderActs(); update(); };
+      row.querySelector(".seg").appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
+
+const nameEl=document.getElementById("name");
+nameEl.value=store.get("lumbar-name")||"";
+nameEl.addEventListener("input",()=>{store.set("lumbar-name",nameEl.value.trim()); clearErr("f-name"); update();});
+document.querySelectorAll("[data-text]").forEach(el=>{ el.value=S[el.dataset.text]||""; el.addEventListener("input",()=>{S[el.dataset.text]=el.value; update();}); });
+const saddle=document.getElementById("saddle"); saddle.checked=!!S.saddle;
+saddle.addEventListener("change",()=>{S.saddle=saddle.checked; update();});
+
+function flags(){
+  const F=[];
+  if(S.saddle) F.push("URGENTE: adormecimiento zona genital/silla o cambios esfínteres");
+  if(S.now!=null&&S.before!=null&&S.now-S.before>=2) F.push("Dolor lumbar +"+(S.now-S.before)+" respecto a antes de la sesión");
+  if(S.irr==="Ha aumentado") F.push("Dolor irradiado en aumento"+(S.reach?" (hasta "+S.reach.toLowerCase()+")":""));
+  if(S.tingle==="Sí, más que antes") F.push("Más alteración sensitiva"+(S.tingleType.length?": "+S.tingleType.join(", ").toLowerCase():""));
+  if(S.weak==="Sí") F.push("Debilidad nueva"+(S.weakType.length?": "+S.weakType.join(", ").toLowerCase():""));
+  const worse=ACTS.filter(a=>S.acts[a]==="Peor"); if(worse.length) F.push("Peor en: "+worse.join(", ").toLowerCase());
+  if(S.level==="Continúa aumentado") F.push("El dolor no ha vuelto a su nivel habitual");
+  if(S.woke==="Sí, varias veces"||S.night==="Sí") F.push("Dolor nocturno relevante");
+  return F;
+}
+
+/* ---------- PDF ---------- */
+const BAD=new Set(["Peor","Ha aumentado","Sí, más que antes","Continúa aumentado","Sí, varias veces"]);
+function pdfSections(){
+  const nd=v=>v==null||v===""||(Array.isArray(v)&&!v.length)?"Sin responder":Array.isArray(v)?v.join(", "):v;
+  const pain=v=>v==null?["Sin responder",null]:[v+"/10 · "+desc(v), v];
+  const R=[];
+  const x=(S.now!=null&&S.before!=null)?S.now-S.before:null;
+  R.push(["1. Dolor lumbar",[
+    {l:"Dolor ahora",v:pain(S.now)[0],p:S.now},
+    {l:"Dolor antes de la sesión",v:pain(S.before)[0],p:S.before},
+    {l:"Cambio",v:x==null?"Sin responder":(x>0?"+":"")+x+" puntos",bad:x!=null&&x>=2}]]);
+  const irr=[{l:"Dolor que baja a glúteo/pierna",v:nd(S.irr),bad:BAD.has(S.irr)}];
+  if(S.irr&&S.irr!=="No tengo dolor que baje") irr.push({l:"Llega hasta",v:nd(S.reach)});
+  R.push(["2. Dolor irradiado",irr]);
+  const t=[{l:"Respecto a antes de entrenar",v:nd(S.tingle),bad:BAD.has(S.tingle)}];
+  if(S.tingle==="Sí, más que antes") t.push({l:"Qué nota",v:nd(S.tingleType),bad:true});
+  t.push({l:"Zona genital / control de esfínteres",v:S.saddle?"SÍ, marcado por el cliente":"No marcado",bad:!!S.saddle});
+  R.push(["3. Hormigueo y sensibilidad",t]);
+  const w=[{l:"Debilidad o dificultad nueva",v:nd(S.weak),bad:S.weak==="Sí"}];
+  if(S.weak==="Sí") w.push({l:"Dónde lo nota",v:nd(S.weakType),bad:true});
+  R.push(["4. Fuerza",w]);
+  R.push(["5. Actividades diarias (vs. antes de la sesión)",ACTS.map(a=>({l:a,v:nd(S.acts[a]),bad:S.acts[a]==="Peor"}))]);
+  R.push(["6. Evolución en las últimas 24 h",[
+    {l:"Justo después de entrenar",v:nd(S.evoPost),bad:BAD.has(S.evoPost)},
+    {l:"Horas posteriores",v:nd(S.evoHours),bad:BAD.has(S.evoHours)},
+    {l:"Nivel de dolor ahora",v:nd(S.level),bad:BAD.has(S.level)}]]);
+  R.push(["7. Descanso",[
+    {l:"Durmió con normalidad",v:nd(S.sleep),bad:S.sleep==="No"},
+    {l:"El dolor le despertó",v:nd(S.woke),bad:BAD.has(S.woke)},
+    {l:"Empeoró de forma importante por la noche",v:nd(S.night),bad:S.night==="Sí"}]]);
+  if(S.notes.trim()) R.push(["Comentarios del cliente",[{l:"",v:S.notes.trim()}]]);
+  return R;
+}
+function makePDF(){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210,H=297,M=16,CW=W-2*M; let y;
+  const INK=[20,37,43],MUT=[91,109,115],TEAL=[14,110,106],RED=[214,69,61],OK=[47,158,91],WARN=[190,135,10];
+  const ensure=h=>{ if(y+h>H-18){ doc.addPage(); y=20; } };
+  doc.setFillColor(...TEAL); doc.rect(0,0,W,40,"F");
+  doc.setTextColor(255,255,255); doc.setFont("helvetica","bold"); doc.setFontSize(9);
+  doc.text("SEGUIMIENTO 24 H TRAS LA SESIÓN",M,13);
+  doc.setFontSize(18); doc.text("Registro de dolor lumbar",M,22);
+  doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
+  doc.text("Cliente: "+(nameEl.value.trim()||"-"),M,31);
+  doc.text("Fecha: "+dateShort+"   ·   Hora: "+timeTxt+" h",M,36);
+  y=50;
+  const F=flags();
+  doc.setFontSize(10);
+  if(F.length){
+    const lines=F.flatMap(f=>doc.splitTextToSize("•  "+f,CW-12));
+    const h=13+lines.length*5;
+    doc.setFillColor(251,227,225); doc.roundedRect(M,y,CW,h,2,2,"F");
+    doc.setFillColor(...RED); doc.rect(M,y,1.6,h,"F");
+    doc.setTextColor(...RED); doc.setFont("helvetica","bold"); doc.setFontSize(11); doc.text("A revisar",M+6,y+7.5);
+    doc.setTextColor(...INK); doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    lines.forEach((ln,i)=>doc.text(ln,M+6,y+13.5+i*5));
+    y+=h+9;
+  } else {
+    doc.setFillColor(225,243,232); doc.roundedRect(M,y,CW,11,2,2,"F");
+    doc.setTextColor(...OK); doc.setFont("helvetica","bold"); doc.text("Sin puntos de alerta en las respuestas",M+6,y+7);
+    y+=19;
+  }
+  const LW=72;
+  pdfSections().forEach(([title,rows])=>{
+    ensure(16);
+    doc.setFont("helvetica","bold"); doc.setFontSize(12); doc.setTextColor(...TEAL); doc.text(title,M,y);
+    doc.setDrawColor(215,224,227); doc.setLineWidth(.3); doc.line(M,y+2.5,W-M,y+2.5); y+=8;
+    doc.setFontSize(10);
+    rows.forEach(r=>{
+      const full=!r.l;
+      const lab=full?[]:doc.splitTextToSize(r.l,LW-4);
+      const val=doc.splitTextToSize(r.v,full?CW:CW-LW);
+      const h=Math.max(lab.length,val.length)*4.6+1.6;
+      ensure(h);
+      if(!full){ doc.setFont("helvetica","normal"); doc.setTextColor(...MUT); doc.text(lab,M,y); }
+      let col=INK; if(r.p!=null) col=r.p<=2?OK:r.p<=5?WARN:RED; if(r.bad) col=RED;
+      doc.setFont("helvetica",(r.bad||r.p!=null)?"bold":"normal"); doc.setTextColor(...col);
+      doc.text(val,full?M:M+LW,y);
+      y+=h;
+    });
+    y+=3;
+  });
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){ doc.setPage(i); doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor(...MUT);
+    doc.text("Registro generado el "+dateShort+" a las "+timeTxt+" h",M,H-10); doc.text("Página "+i+" de "+n,W-M,H-10,{align:"right"}); }
+  return doc.output("blob");
+}
+function pdfName(){ const n=(nameEl.value.trim()||"cliente").replace(/[\\/:*?"<>|]+/g,"").replace(/\s+/g," "); return "Registro lumbar - "+n+" - "+todayKey+".pdf"; }
+let pdfDone=false, pdfSnap="", busy=false;
+const snap=()=>JSON.stringify(S)+"|"+nameEl.value.trim();
+const saveBtn=document.getElementById("saveBtn"), saveLbl=document.getElementById("saveLbl"), saveHelp=document.getElementById("saveHelp"), toast=document.getElementById("toast");
+function refreshBtn(){
+  saveLbl.textContent = busy ? "Generando PDF…" : pdfDone ? "✓ PDF listo · volver a compartir" : "Guardar y compartir en PDF";
+  saveBtn.classList.toggle("done", pdfDone && !busy); saveBtn.disabled = busy; saveHelp.hidden = !pdfDone;
+}
+function update(){
+  const dv=document.getElementById("diffVal");
+  if(S.now!=null&&S.before!=null){ const x=S.now-S.before; dv.textContent=(x>0?"+":"")+x; dv.style.color=x>=2?"var(--bad)":x>0?"var(--warn)":"var(--ok)"; }
+  else { dv.textContent="—"; dv.style.color=""; }
+  if(pdfDone&&snap()!==pdfSnap){ pdfDone=false; refreshBtn(); toast.textContent="Has cambiado alguna respuesta: vuelve a guardar el PDF."; }
+  store.set(DRAFT,S);
+}
+function clearErr(id){ const f=document.getElementById(id); if(!f) return; f.classList.remove("invalid"); const e=f.querySelector(".err"); if(e) e.hidden=true; }
+function validate(){
+  let first=null;
+  const chk=(id,ok)=>{ const f=document.getElementById(id); f.classList.toggle("invalid",!ok); f.querySelector(".err").hidden=ok; if(!ok&&!first) first=f; };
+  chk("f-name",!!nameEl.value.trim()); chk("f-now",S.now!=null); chk("f-before",S.before!=null);
+  if(first) first.scrollIntoView({behavior:"smooth",block:"center"});
+  return !first;
+}
+saveBtn.addEventListener("click",async()=>{
+  if(busy) return;
+  update(); if(!validate()){ toast.textContent="Faltan campos obligatorios (marcados en rojo)."; return; }
+  busy=true; refreshBtn(); toast.textContent="";
+  if(!window.jspdf){ busy=false; refreshBtn(); toast.textContent="No se ha podido cargar el generador de PDF. Revisa la conexión y recarga la página."; return; }
+  let blob;
+  try{ blob=makePDF(); }catch(e){ busy=false; refreshBtn(); toast.textContent="No se ha podido generar el PDF. Inténtalo de nuevo."; return; }
+  const name=pdfName();
+  const file=new File([blob],name,{type:"application/pdf"});
+  let shared=false;
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file],title:"Registro de dolor lumbar"}); shared=true; }
+    catch(e){ if(e&&e.name==="AbortError"){ busy=false; refreshBtn(); toast.textContent="Has cerrado el menú. Vuelve a pulsar el botón para compartir el PDF."; return; } }
+  }
+  if(!shared){
+    const url=URL.createObjectURL(blob); const a=document.createElement("a");
+    a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }
+  pdfDone=true; pdfSnap=snap();
+  toast.textContent = shared ? "PDF compartido." : "PDF descargado.";
+  busy=false; refreshBtn();
+});
+
+renderScales(); renderOpts(); renderActs(); update();
+</script>
+</body>
+</html>
